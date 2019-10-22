@@ -19,6 +19,20 @@ import tf
 from cv_bridge import CvBridge
 from sensor_msgs.msg import CameraInfo
 
+import glob
+import os
+import sys
+
+try:
+    CARLA_ROOT = os.getenv('CARLA_ROOT')
+    sys.path.append(glob.glob('%s/PythonAPI/carla/dist/carla-*%d.%d-%s.egg' % (
+        CARLA_ROOT,
+        sys.version_info.major,
+        sys.version_info.minor,
+        'win-amd64' if os.name == 'nt' else 'linux-x86_64'))[0])
+except IndexError:
+    pass
+
 import carla
 from carla_ros_bridge.sensor import Sensor
 import carla_ros_bridge.transforms as trans

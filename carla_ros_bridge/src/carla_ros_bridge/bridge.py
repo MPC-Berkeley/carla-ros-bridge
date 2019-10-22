@@ -20,6 +20,21 @@ from threading import Thread, Lock, Event
 import pkg_resources
 import rospy
 
+
+import glob
+import os
+import sys
+
+try:
+    CARLA_ROOT = os.getenv('CARLA_ROOT')
+    sys.path.append(glob.glob('%s/PythonAPI/carla/dist/carla-*%d.%d-%s.egg' % (
+        CARLA_ROOT,
+        sys.version_info.major,
+        sys.version_info.minor,
+        'win-amd64' if os.name == 'nt' else 'linux-x86_64'))[0])
+except IndexError:
+    pass
+
 import carla
 
 from carla_ros_bridge.actor import Actor
@@ -61,11 +76,17 @@ class CarlaRosBridge(object):
         :type params: dict
         """
         # check CARLA version
-        dist = pkg_resources.get_distribution("carla")
-        if LooseVersion(dist.version) < LooseVersion(self.CARLA_VERSION):
-            raise ImportError(
-                "CARLA version {} or newer required. CARLA version found: {}".format(
-                    self.CARLA_VERSION, dist))
+        try:
+            dist = pkg_resources.get_distribution("carla")
+            if LooseVersion(dist.version) < LooseVersion(self.CARLA_VERSION):
+                raise ImportError(
+                    "CARLA version {} or newer required. CARLA version found: {}".format(
+                        self.CARLA_VERSION, dist))
+        except:
+            if self.CARLA_VERSION not in carla.__path__[0]:\
+                raise ImportError("CARLA version {} or newer required.)")
+
+
 
         self.parameters = params
         self.actors = {}
