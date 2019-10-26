@@ -360,6 +360,8 @@ class CarlaRosBridge(object):
         """
         create an actor
         """
+        if carla_actor.type_id == 'sensor.camera.rgb' and carla_actor.parent:
+            return
         parent = None
         if carla_actor.parent:
             if carla_actor.parent.id in self.actors:
@@ -388,6 +390,7 @@ class CarlaRosBridge(object):
         elif carla_actor.type_id.startswith("sensor"):
             if carla_actor.type_id.startswith("sensor.camera"):
                 if carla_actor.type_id.startswith("sensor.camera.rgb"):
+                    print(carla_actor.type_id, carla_actor.attributes.get('role_name'))
                     actor = RgbCamera(
                         carla_actor, parent, self.comm, self.carla_settings.synchronous_mode)
                 elif carla_actor.type_id.startswith("sensor.camera.depth"):
