@@ -69,7 +69,12 @@ class TrafficParticipant(Actor):
         odometry.child_frame_id = self.get_prefix()
         odometry.pose.pose = self.get_current_ros_pose()
         odometry.twist.twist = self.get_current_ros_twist()
-        self.publish_message(self.get_topic_prefix() + "/odometry", odometry)
+        
+        #from the yaml file, ego_vehicle_names are "hero", "ego_vehicle"
+        if "hero" in self.get_topic_prefix() or "ego_vehicle" in self.get_topic_prefix():
+            self.publish_message(self.get_topic_prefix() + "/odometry", odometry)
+        else:
+            self.publish_message("/carla/odometry", odometry)
 
     def get_object_info(self):
         """
