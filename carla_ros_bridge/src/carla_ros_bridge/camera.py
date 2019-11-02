@@ -108,20 +108,25 @@ class Camera(Sensor):
         :param carla_image: carla image object
         :type carla_image: carla.Image
         """
-        if ((carla_image.height != self._camera_info.height) or
-                (carla_image.width != self._camera_info.width)):
-            rospy.logerr(
-                "Camera{} received image not matching configuration".format(self.get_prefix()))
+        if not hasattr(self, '_camera_info'):
+            rospy.logerr("Camera info not available!")
+        else:
+            if ((carla_image.height != self._camera_info.height) or
+                    (carla_image.width != self._camera_info.width)):
+                rospy.logerr(
+                    "Camera{} received image not matching configuration".format(self.get_prefix()))
+
         image_data_array, encoding = self.get_carla_image_data_array(
             carla_image=carla_image)
         img_msg = Camera.cv_bridge.cv2_to_imgmsg(image_data_array, encoding=encoding)
         # the camera data is in respect to the camera's own frame
         img_msg.header = self.get_msg_header()
 
-        cam_info = self._camera_info
-        cam_info.header = img_msg.header
-
-        self.publish_message(self.get_topic_prefix() + '/camera_info', cam_info)
+        if hasattr(self, '_camera_info'):
+            cam_info = self._camera_info
+            cam_info.header = img_msg.header
+            self.publish_message(self.get_topic_prefix() + '/camera_info', cam_info)
+            
         self.publish_message(
             self.get_topic_prefix() + '/' + self.get_image_topic_name(), img_msg)
 
