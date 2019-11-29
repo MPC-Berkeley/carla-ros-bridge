@@ -94,9 +94,9 @@ class CarlaRosBridge(object):
         self.carla_world = carla_world
         self.synchronous_mode_update_thread = None
         self.shutdown = Event()
+        # set carla world settings
+        self.carla_settings = carla_world.get_settings()
 
-        # set carla world settings (VG edit 10/31: disabled for now!)
-        '''
         # workaround: settings can only applied within non-sync mode
         if self.carla_settings.synchronous_mode:
             self.carla_settings.synchronous_mode = False
@@ -107,11 +107,6 @@ class CarlaRosBridge(object):
         rospy.loginfo("fixed_delta_seconds: {}".format(self.parameters["fixed_delta_seconds"]))
         self.carla_settings.fixed_delta_seconds = self.parameters["fixed_delta_seconds"]
         carla_world.apply_settings(self.carla_settings)
-        '''
-
-        self.carla_settings = carla_world.get_settings()
-        rospy.loginfo("Sync Mode: %d" % self.carla_settings.synchronous_mode)
-        rospy.loginfo("Sync Mode: %f" % self.carla_settings.fixed_delta_seconds)
 
         self.comm = Communication()
         self.update_lock = Lock()
@@ -267,7 +262,6 @@ class CarlaRosBridge(object):
             if self.update_lock.acquire(False):
                 if self.timestamp_last_run < carla_snapshot.timestamp.elapsed_seconds:
                     self.timestamp_last_run = carla_snapshot.timestamp.elapsed_seconds
-                    rospy.logdebug("timestamp variable: %f" % self.timestamp_last_run)
                     self.comm.update_clock(carla_snapshot.timestamp)
                     self.status_publisher.set_frame(carla_snapshot.frame)
                     self._update(carla_snapshot.frame, carla_snapshot.timestamp.elapsed_seconds)
@@ -366,8 +360,6 @@ class CarlaRosBridge(object):
         """
         create an actor
         """
-        if carla_actor.type_id == 'sensor.camera.rgb' and carla_actor.parent:
-            return
         parent = None
         if carla_actor.parent:
             if carla_actor.parent.id in self.actors:
@@ -396,7 +388,6 @@ class CarlaRosBridge(object):
         elif carla_actor.type_id.startswith("sensor"):
             if carla_actor.type_id.startswith("sensor.camera"):
                 if carla_actor.type_id.startswith("sensor.camera.rgb"):
-                    print(carla_actor.type_id, carla_actor.attributes.get('role_name'))
                     actor = RgbCamera(
                         carla_actor, parent, self.comm, self.carla_settings.synchronous_mode)
                 elif carla_actor.type_id.startswith("sensor.camera.depth"):
