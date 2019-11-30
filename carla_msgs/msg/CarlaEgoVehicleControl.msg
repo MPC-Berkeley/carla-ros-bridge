@@ -30,3 +30,6 @@ int32 gear
 
 # manual gear shift
 bool manual_gear_shift
+
+# intention for CIL (left=-1, straight=0, right=1)
+int32 intention
