@@ -765,6 +765,7 @@ def main():
     rospy.init_node('carla_manual_control', anonymous=True)
 
     role_name = rospy.get_param("~role_name", "ego_vehicle")
+    use_steering_wheel = rospy.get_param("~use_steering_wheel", 0)
 
     # resolution should be similar to spawned camera with role-name 'view'
     resolution = {"width": 800, "height": 600}
@@ -780,8 +781,12 @@ def main():
 
         hud = HUD(role_name, resolution['width'], resolution['height'])
         world = World(role_name, hud)
-        #controller = KeyboardControl(role_name, hud)
-        controller = DualControl(role_name, hud)
+        if use_steering_wheel:
+            print('Using the steering wheel.')
+            controller = DualControl(role_name, hud)
+        else:
+            print('Using the keyboard only.')
+            controller = KeyboardControl(role_name, hud)
 
         clock = pygame.time.Clock()
 

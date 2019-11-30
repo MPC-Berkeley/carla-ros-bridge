@@ -1,9 +1,11 @@
 <!-- -->
 <launch>
   <arg name="role_name" default="ego_vehicle"/>
+  <arg name="use_steering_wheel" default="0"/>  
 
-  <node pkg="carla_manual_control" type="carla_manual_control_steeringwheel.py" name="carla_manual_control_$(arg role_name)" output="screen">
+  <node pkg="carla_manual_control" type="carla_manual_control_steeringwheel.py" name="carla_manual_control_$(arg role_name)" output="screen" >
     <param name="role_name" value="$(arg role_name)"/>
+    <param name="use_steering_wheel" value="$(arg use_steering_wheel)"/>
   </node>
 
 </launch>
