@@ -25,9 +25,8 @@
     <arg name="sensor_definition_file" value="$(arg sensor_definition_file)"/>
   </include>
 
-  <include file="$(find carla_manual_control)/launch/carla_manual_control.launch">
+  <include file="$(find carla_network_control)/launch/carla_network_control.launch">
     <arg name='role_name' value='$(arg role_name)'/>
-    <arg name='use_steering_wheel' value='$(arg use_steering_wheel)'/>
   </include>  
 
 </launch>

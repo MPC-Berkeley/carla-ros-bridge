@@ -1,0 +1,8 @@
+Additions to Dockerfile needed for fast_semantic_segmentation code:
+
+pip install --user tensorflow-gpu>=1.8.0
+pip install --user gast==0.2.2
+pip install --user numpy matplotlib pillow toposort
+sudo apt-get install protobuf-compiler
+
+# Then compile the proto files (make build-protos in rootdir).

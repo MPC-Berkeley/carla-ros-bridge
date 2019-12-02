@@ -1,0 +1,14 @@
+<!-- -->
+<launch>
+  <arg name="role_name" default="ego_vehicle"/>
+  <arg name="config_path" default="src/carla_network_control/fast-semantic-segmentation/configs"/>
+  <arg name="config_file" default="carla_icnet_resnet_v1_city.config"/>
+  <arg name="checkpoint"  default="checkpoints_icnet/model.ckpt-250887"/>
+
+  <node pkg="carla_network_control" type="carla_network_control.py" name="carla_network_control$(arg role_name)" output="screen" >
+    <param name="role_name" value="$(arg role_name)"/>
+    <param name="model_config" value="$(find carla_network_control)/$(arg config_path)/$(arg config_file)"/>
+    <param name="checkpoint" value="$(find carla_network_control)/$(arg config_path)/$(arg checkpoint)"/>
+  </node>
+
+</launch>
